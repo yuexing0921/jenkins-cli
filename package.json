@@ -1,0 +1,37 @@
+{
+  "name": "jenkins-cli",
+  "version": "0.0.1",
+  "description": "Jenkins command line tool",
+  "main": "./dist/index.js",
+  "bin": {
+    "jk": "./bin/index"
+  },
+  "keywords": [
+    "jenkins-cli",
+    "jenkins",
+    "node-jenkins",
+    "jk"
+  ],
+  "files": [
+    "dist/",
+    "bin/"
+  ],
+  "scripts": {
+    "dev": "tsc --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yuexing0921/jenkins-cli"
+  },
+  "author": "yuexing0921@gmail.com",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/yargs": "^13.0.3",
+    "typescript": "^3.7.2",
+    "yargs": "^14.2.0"
+  },
+  "dependencies": {
+    "jenkins": "^0.27.0",
+    "xml2js": "^0.4.22"
+  }
+}

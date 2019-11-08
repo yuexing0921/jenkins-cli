@@ -1,0 +1,41 @@
+#!/usr/bin/env node
+const path = require("path");
+const fs = require("fs");
+const utils = require("../dist/util");
+const yargs = require("yargs").options({
+	job: {
+		alias: "j",
+		describe: "Job to be executed",
+        type: "string",
+		default: ""
+	},
+	config: {
+		alias: "c",
+		describe: "Jenkins configuration, default values are jenkins.yaml, jenkins.js, jenkins.json",
+		type: "string",
+		default: ""
+	}
+});
+
+const argv = yargs.argv;
+
+const config = path.resolve(argv.config) || "jenkins.js";
+
+/**
+ * 判断要转换的文件是否存在
+ */
+if (!fs.existsSync(config) && !fs.existsSync("jenkins.yaml") && !fs.existsSync("jenkins.json")) {
+    utils.printError(`Jenkins configuration not found.`);
+    console.log();
+    yargs.showHelp();
+    return;
+}
+
+const { run } = require("../dist");
+
+const buildOption = {
+	config: argv.config,
+	job: argv.job
+};
+
+run(buildOption);

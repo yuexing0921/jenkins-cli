@@ -1,0 +1,18 @@
+{
+	"compilerOptions": {
+		"outDir": "dist",
+		"sourceMap": true,
+		"noImplicitAny": false,
+		"module": "commonjs",
+		"target": "es6",
+		"noUnusedLocals": true,
+		"lib": ["dom","es6", "es2016.array.include"],
+
+		"declaration": true,
+		"noEmitOnError": false,
+		"moduleResolution": "node",
+		"strictNullChecks": true
+	},
+	"include": ["src/**/*.ts"],
+	"exclude": ["node_modules", "dist"]
+}
