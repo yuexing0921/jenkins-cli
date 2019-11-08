@@ -14,6 +14,11 @@ export const resolve = (p)=> {
   return path.resolve(p)
 }
 
+export const printInfo = msg => {
+	console.log();
+  console.log(chalk.blue(msg));
+  console.log();
+};
 
 export const printError = (msg: string) => {
   console.error(msg)

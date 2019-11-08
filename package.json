@@ -28,6 +28,8 @@
   "devDependencies": {
     "@types/node": "^12.12.6",
     "@types/yargs": "^13.0.3",
+    "inquirer": "^7.0.0",
+    "inquirer-search-checkbox": "^1.0.0",
     "typescript": "^3.7.2",
     "yargs": "^14.2.0"
   },
