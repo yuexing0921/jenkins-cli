@@ -4,7 +4,8 @@ import { JenkinsClientOptions } from "jenkins"
 
 import { printError,printInfo } from "./utils"
 
-import { readCustomEntry } from "./inquirer"
+import { singleSelection } from "./inquirer"
+import { LAST_KEY } from "./config"
 
 export interface CliOption {
     lastJob: string;
@@ -23,10 +24,9 @@ export const run = async (options: CliOption) => {
     try {
         const info = await jenkins.info()
         const jobs: string[] = info.jobs.map(job => job.name)
-        const selectJobs = await readCustomEntry(jobs);
-        console.log(selectJobs)
+        const selectJob = await singleSelection([LAST_KEY].concat(jobs));
 
-		printInfo(`Building job: ${selectJobs.join(", ")}`);
+		printInfo(`Building job: ${selectJob}`);
     } catch (err) {
         printError(err)
     }
