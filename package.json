@@ -26,12 +26,16 @@
   "author": "yuexing0921@gmail.com",
   "license": "MIT",
   "devDependencies": {
+    "@types/node": "^12.12.6",
     "@types/yargs": "^13.0.3",
     "typescript": "^3.7.2",
     "yargs": "^14.2.0"
   },
   "dependencies": {
+    "chalk": "^2.4.2",
+    "fs-extra": "^8.1.0",
     "jenkins": "^0.27.0",
+    "js-yaml": "^3.13.1",
     "xml2js": "^0.4.22"
   }
 }
