@@ -4,27 +4,24 @@ import * as SearchCheckbox from "inquirer-search-checkbox";
 
 inquirer.registerPrompt("SearchCheckbox", SearchCheckbox);
 
-import {genInquirerKeys } from "./"
-import { LAST_KEY } from "../config";
+import { genLastJob } from "./"
 
-export async function multipleSelection(keys: string[]) {
-    
+export async function multipleSelection(keys: string[],msg) {
    
     const answers = await inquirer.prompt([
         {
             type: "SearchCheckbox",
             name: "key",
-            message: `Select your jenkins job (${keys.length})`,
-            default: LAST_KEY,
+            message: msg,
             choices: keys,
             pageSize: 12,
             validate(answer) {
                 if (answer.length < 1) {
-                    return "You must choose at least one job.";
+                    return "You must choose .";
                 }
                 return true;
             }
         }
     ]);
-    return genInquirerKeys(answers.key);
+    return genLastJob(answers.key);
 }

@@ -1,34 +1,51 @@
+import { JenkinsCli, CliOption, ParameterType } from "./jenkins-cli";
 
-import * as Jenkins from "jenkins"
-import { JenkinsClientOptions } from "jenkins"
 
-import { printError,printInfo } from "./utils"
+import { printError, printInfo } from "./utils"
 
-import { singleSelection } from "./inquirer"
+import { singleSelection , multipleSelection  } from "./inquirer"
 import { LAST_KEY } from "./config"
 
-export interface CliOption {
-    lastJob: string;
-    config: JenkinsClientOptions;
-}
 
 
 
 export const run = async (options: CliOption) => {
 
-    const jenkins = Jenkins({
-        ...options.config,
-        promisify: true
-    })
+
+    const jk = new JenkinsCli(options);
 
     try {
-        const info = await jenkins.info()
-        const jobs: string[] = info.jobs.map(job => job.name)
-        const selectJob = await singleSelection([LAST_KEY].concat(jobs));
+        // get the job list
+        const jobs: string[] = await jk.getJobs()
+        // Reade the user selected job
+        const selectJob = await singleSelection([LAST_KEY].concat(jobs),`Select your jenkins job (${jobs.length})`);
 
-		printInfo(`Building job: ${selectJob}`);
+        const parametersInfo = await jk.getParameters(selectJob)
+        let parameters = {}
+        const parameterMsg = "Select your parameters: "
+        for(const k of parametersInfo){
+            
+            try{
+                switch(k.type){
+                    case ParameterType.git:
+                    case ParameterType.radio:
+                        parameters[k.key] = await singleSelection(k.value, parameterMsg + k.description);
+                        break;
+                    case ParameterType.checkbox:
+                        parameters[k.key] = await multipleSelection(k.value, parameterMsg + k.description);
+                        break;
+                }
+            }catch(err){
+                console.error(err)
+            }
+        }
+        printInfo(`Building job: ${selectJob}`);
+        jk.build(selectJob, parameters)
+
     } catch (err) {
         printError(err)
     }
 
 }
+
+

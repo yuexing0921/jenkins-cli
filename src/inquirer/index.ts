@@ -1,25 +1,27 @@
 
 
-import { lastJobCache } from "../utils/cache";
+import { lastJobCache } from "../cache";
 
 export { multipleSelection } from "./multiple";
 
 export { singleSelection } from "./single";
 
-import {LAST_KEY} from "../config";
+import { LAST_KEY } from "../config";
 
 
-export async function genInquirerKeys(key: string[]) {
-	if (key.includes(LAST_KEY)) {
+
+export async function genLastJob(key: string) {
+	if (key === LAST_KEY) {
 		const lastJob = lastJobCache.getJob();
-
-		if (lastJob.length === 0) {
-			return Promise.resolve([]);
+		if (!lastJob.name) {
+			lastJobCache.refreshJob({
+				name: key,
+				parameters: {}
+			})
+			return Promise.resolve("");
 		} else {
-			key = lastJobCache.getJob();
+			key = lastJobCache.getJob().name;
 		}
 	}
-
-	lastJobCache.refreshJob(key);
 	return Promise.resolve(key);
 }

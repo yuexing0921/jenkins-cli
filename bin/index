@@ -21,9 +21,6 @@ const argv = yargs.argv;
 const pathConfig = utils.resolve(argv.config) ;
 
 
-/**
- * 判断要转换的文件是否存在
- */
 if (!fs.existsSync(pathConfig) && !fs.existsSync("jenkins.yaml") ) {
     utils.printError(`Jenkins configuration not found.`);
     console.log();

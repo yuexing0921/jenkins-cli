@@ -5,26 +5,24 @@ import * as fuzzy from "fuzzy";
 
 inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'));
 
-import {genInquirerKeys } from "./"
-import { LAST_KEY } from "../config";
+import { genLastJob } from "./"
 
-export async function singleSelection(jobs: string[]) {
-    
+export async function singleSelection(keys: string[], msg) {
+
     const answers = await inquirer.prompt([
-		{
-			type: "autocomplete",
-			name: "key",
-            message: `Select your jenkins job (${jobs.length})`,
-            source: (answers, input) =>{
-                const fuzzyResult = fuzzy.filter(input || '', jobs);
+        {
+            type: "autocomplete",
+            name: "key",
+            message: msg,
+            source: (answers, input) => {
+                const fuzzyResult = fuzzy.filter(input || '', keys);
                 return Promise.resolve(fuzzyResult.map(el => el.original));
-              },
-            default: LAST_KEY,
+            },
             pageSize: 12,
             validate(val) {
-                return val ? true : "You must choose at least one job.";
+                return val ? true : "You must choose.";
             }
-		}
-	]);
-    return genInquirerKeys(answers.key);
+        }
+    ]);
+    return genLastJob(answers.key);
 }
