@@ -1,5 +1,5 @@
 {
-  "name": "jenkins-cli",
+  "name": "jenkins-cli-node",
   "version": "0.0.1",
   "description": "Jenkins command line tool",
   "main": "./dist/index.js",
