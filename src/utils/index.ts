@@ -24,15 +24,20 @@ export const resolve = (p)=> {
 }
 
 
-export const alert = (title: string, message: string) => {
+export const alert = (title: string, message: string, clickFun?:()=> void) => {
 	notifier.notify({
 		title ,
     message,
     icon: path.join(ROOT_PATH,'../public/jenkins.png'),
     timeout: 8
-	});
+  });
+  if(clickFun){
+    notifier.on('click', (notifierObject, options, event) => {
+      clickFun()
+    });
+  }
 }
-
+   
 export const sleep = (timeout) =>{
   return new Promise(resolve =>{
     setTimeout(resolve,timeout)
