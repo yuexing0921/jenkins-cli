@@ -4,7 +4,6 @@ import { JenkinsClientOptions } from "jenkins"
 import { printError, loadXML, getBranchByRemote } from "../utils"
 import { getParametersByGit, getParametersByRadio, getParametersByCheckbox } from "./plugin";
 
-
 export interface CliOption {
     lastJob: string;
     config: JenkinsClientOptions;
@@ -46,9 +45,9 @@ export class JenkinsCli {
     }
 
 
+    // get all parameters for the job
     async getParameters(selectJob): Promise<Parameter[]> {
         try {
-            // 2. 
             const config: any = await this.getConfig(selectJob)
 
             let parameters: Parameter[] = []
@@ -91,7 +90,31 @@ export class JenkinsCli {
         }
     }
 
+     // todo: Unable to get the latest job queue when a single job takes a lot of time
     async build(selectJob, parameters) {
-        return this.jenkins.job.build({ name: selectJob, parameters })
+
+        await this.jenkins.job.build({ name: selectJob, parameters })
+        
+       
+      
+
+        return await this.jenkins.job.get(selectJob);
+
+        // const log = await this.jenkins.build.logStream(selectJob, info.lastBuild.number)
+
+        // return new Promise((resolve, reject) => {
+        //     log.on('data', function(text) {
+        //         process.stdout.write(text)
+        //     })
+    
+        //     log.on('error', function(err) {
+        //         printError(err)
+        //         reject(err)
+        //     })
+    
+        //     log.on('end', function() {
+        //         resolve(true)
+        //     })
+        // })
     }
 }
