@@ -8,17 +8,40 @@ import { parseString } from "xml2js"
 
 import * as Git from "simple-git/promise";
 
+import * as notifier from "node-notifier";
+
 import {
   existsSync,
   readFileSync,
 } from 'fs-extra';
 import { safeLoad } from 'js-yaml';
+import { ROOT_PATH } from '../config';
 
 const git = Git();
 
 export const resolve = (p)=> {
   return path.resolve(p)
 }
+
+
+export const alert = (title: string, message: string) => {
+	notifier.notify({
+		title ,
+    message,
+    icon: path.join(ROOT_PATH,'../public/jenkins.png'),
+    timeout: 8
+	});
+}
+
+export const sleep = (timeout) =>{
+  return new Promise(resolve =>{
+    setTimeout(resolve,timeout)
+  })
+}
+export const printSuccess = msg => {
+	console.log();
+	console.log(chalk.green(msg));
+};
 
 export const printInfo = msg => {
 	console.log();
@@ -61,3 +84,4 @@ export const getBranchByRemote = async (url):Promise<string[]> =>{
   
   return branch.match(/refs\/heads\/(\S+)/g) || []
 }
+
