@@ -12,10 +12,6 @@
     "node-jenkins",
     "jk"
   ],
-  "files": [
-    "dist/",
-    "bin/"
-  ],
   "scripts": {
     "dev": "tsc --watch"
   },
