@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 const fs = require("fs");
+const path = require("path");
+const os = require("os");
 const utils = require("../dist/utils");
 const yargs = require("yargs").options({
 	job: {
@@ -10,30 +12,27 @@ const yargs = require("yargs").options({
 	},
 	config: {
 		alias: "c",
-		describe: "Jenkins configuration, default values are jenkins.yaml, jenkins.json",
+		describe: "Jenkins configuration, default values are .jenkins.yaml",
 		type: "string",
-		default: "jenkins.json"
+		default: ".jenkins.yaml"
 	}
 });
 
 const argv = yargs.argv;
 
-const pathConfig = utils.resolve(argv.config) ;
+const projectConfig = path.resolve(argv.config) ;
+const rootConfig = path.join(os.homedir() ,argv.config) ;
 
-
-if (!fs.existsSync(pathConfig) && !fs.existsSync("jenkins.yaml") ) {
+let config;
+if(fs.existsSync(projectConfig)){
+    config = utils.loadYaml(projectConfig);
+} else if(fs.existsSync(rootConfig)){
+    config = utils.loadYaml(rootConfig);
+}else{
     utils.printError(`Jenkins configuration not found.`);
     console.log();
     yargs.showHelp();
     return;
-}
-
-let config;
-
-if(pathConfig.match(/.yaml$/)){
-    config = utils.loadYaml(pathConfig);
-}else{
-    config = require(pathConfig);
 }
 
 const { run } = require("../dist");
