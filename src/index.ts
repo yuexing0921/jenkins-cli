@@ -1,13 +1,13 @@
-import { JenkinsCli, CliOption, ParameterType } from "./jenkins-cli";
+import * as opn from "opn";
 
+import { JenkinsCli, CliOption, ParameterType } from "./jenkins-cli";
 
 import { printError, printInfo, alert } from "./utils"
 
 import { singleSelection, multipleSelection } from "./inquirer"
 
+import { REBUILD } from "./config"
 
-
-import * as opn from "opn";
 
 export const run = async (options: CliOption) => {
 
@@ -17,11 +17,22 @@ export const run = async (options: CliOption) => {
         // get the job list
         const jobs: string[] = await jk.getJobs()
 
-        // Reade the user selected job
-        const selectJob = await singleSelection(concatFilters(jk.cacheJobs.map(k => k.name), jobs), `Select your jenkins job (${jobs.length})`);
+        const cacheKeys = jk.cacheJobs.map(k => k.name)
+        if (jk.cacheJobs.length > 0) {
+            cacheKeys.splice(0, 0, REBUILD)
+        }
 
-        const cacheJob = jk.cacheJobs.find(k => k.name === selectJob) || {parameters:{}}
-        
+        // Reade the user selected job
+        const selectJob = await singleSelection(concatFilters(cacheKeys, jobs), `Select your jenkins job (${jobs.length})`);
+
+
+        if (selectJob === REBUILD) {
+            const cacheJob = jk.cacheJobs[0]
+            return buildJob(jk, cacheJob.name, cacheJob.parameters)
+        }
+
+        const cacheJob = jk.cacheJobs.find(k => k.name === selectJob) || { parameters: {} }
+
         // get all parameters for the job
         const parametersInfo = await jk.getParameters(selectJob)
         let parameters = {}
@@ -39,12 +50,7 @@ export const run = async (options: CliOption) => {
                     break;
             }
         }
-
-        printInfo(`Building job: ${selectJob} `)
-        const buildInfo = await jk.build(selectJob, parameters)
-        alert(`Jenkins job: ${selectJob}`, "Click for details.", () => {
-            opn(buildInfo.url)
-        })
+        buildJob(jk, selectJob, parameters)
 
     } catch (err) {
         printError(err)
@@ -52,6 +58,17 @@ export const run = async (options: CliOption) => {
 
 }
 
+async function buildJob(jk: JenkinsCli, job, parameters) {
+    try {
+        printInfo(`Building job: ${job} `)
+        const buildInfo = await jk.build(job, parameters)
+        alert(`Jenkins job: ${job}`, "Click for details.", () => {
+            opn(buildInfo.url)
+        })
+    } catch (err) {
+        printError(err)
+    }
+}
 
 function concatFilters(arr1: string[], arr2: string[]) {
     return Array.from(new Set(arr1.concat(arr2))).filter(k => k)
