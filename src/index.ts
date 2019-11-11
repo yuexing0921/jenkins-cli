@@ -12,21 +12,27 @@ import { REBUILD } from "./config"
 export const run = async (options: CliOption) => {
 
     const jk = new JenkinsCli(options);
+    const cacheKeys = jk.cacheJobs.map(k => k.name)
+    if (jk.cacheJobs.length > 0) {
+        cacheKeys.splice(0, 0, REBUILD)
+    }
 
     try {
+        if(options.rebuild && jk.cacheJobs.length > 0){
+            // Cli specified
+            const cacheJob = jk.cacheJobs[0]
+            return buildJob(jk, cacheJob.name, cacheJob.parameters)
+        }
         // get the job list
         const jobs: string[] = await jk.getJobs()
 
-        const cacheKeys = jk.cacheJobs.map(k => k.name)
-        if (jk.cacheJobs.length > 0) {
-            cacheKeys.splice(0, 0, REBUILD)
-        }
-
+        
         // Reade the user selected job
         const selectJob = await singleSelection(concatFilters(cacheKeys, jobs), `Select your jenkins job (${jobs.length})`);
 
 
         if (selectJob === REBUILD) {
+             // inquirer specified
             const cacheJob = jk.cacheJobs[0]
             return buildJob(jk, cacheJob.name, cacheJob.parameters)
         }

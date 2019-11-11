@@ -10,6 +10,12 @@ const yargs = require("yargs").options({
         type: "string",
 		default: ""
 	},
+	rebuild: {
+		alias: "r",
+		describe: "Rebuild the previous job",
+        type: "boolean",
+		default: false
+	},
 	config: {
 		alias: "c",
 		describe: "Jenkins configuration, default values are .jenkins.yaml",
@@ -39,7 +45,8 @@ const { run } = require("../dist");
 
 const buildOption = {
 	config,
-	job: argv.job
+	job: argv.job,
+	rebuild: argv.rebuild
 };
 
 run(buildOption);

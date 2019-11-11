@@ -7,7 +7,8 @@ import { printError, loadXML, getBranchByRemote } from "../utils"
 import { getParametersByGit, getParametersByRadio, getParametersByCheckbox } from "./plugin";
 
 export interface CliOption {
-    lastJob: string;
+    job: string;
+    rebuild: boolean;
     config: JenkinsClientOptions;
 }
 
