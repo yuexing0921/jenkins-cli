@@ -1,6 +1,6 @@
 {
   "name": "jenkins-cli-node",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Jenkins command line tool",
   "main": "./dist/index.js",
   "bin": {
@@ -11,6 +11,12 @@
     "jenkins",
     "node-jenkins",
     "jk"
+  ],
+  "files": [
+    "dist/",
+    "bin/",
+    "src/",
+    "public"
   ],
   "scripts": {
     "dev": "tsc --watch"
