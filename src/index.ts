@@ -26,10 +26,14 @@ export const run = async (options: CliOption) => {
         // get the job list
         const jobs: string[] = await jk.getJobs()
 
+        let selectJob
+        if(options.job && jobs.find(k => k === options.job)){
+            selectJob = options.job
+        }else{
+            // Reade the user selected job
+            selectJob = await singleSelection(concatFilters(cacheKeys, jobs), `Select your jenkins job (${jobs.length})`);
+        }
         
-        // Reade the user selected job
-        const selectJob = await singleSelection(concatFilters(cacheKeys, jobs), `Select your jenkins job (${jobs.length})`);
-
 
         if (selectJob === REBUILD) {
              // inquirer specified
@@ -45,7 +49,6 @@ export const run = async (options: CliOption) => {
         // Reade the user selected parameters
         const parameterMsg = "Select your parameters: "
         for (const k of parametersInfo) {
-
             switch (k.type) {
                 case ParameterType.git:
                 case ParameterType.radio:
