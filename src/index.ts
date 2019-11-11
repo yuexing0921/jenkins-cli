@@ -21,7 +21,7 @@ export const run = async (options: CliOption) => {
         const selectJob = await singleSelection(concatFilters(jk.cacheJobs.map(k => k.name), jobs), `Select your jenkins job (${jobs.length})`);
 
         const cacheJob = jk.cacheJobs.find(k => k.name === selectJob) || {parameters:{}}
-        console.log(cacheJob)
+        
         // get all parameters for the job
         const parametersInfo = await jk.getParameters(selectJob)
         let parameters = {}
