@@ -35,7 +35,7 @@ export const run = async (options: CliOption) => {
                     parameters[k.key] = await singleSelection(concatFilters([cacheJob.parameters[k.key]], k.value), parameterMsg + k.description);
                     break;
                 case ParameterType.checkbox:
-                    parameters[k.key] = await multipleSelection(concatFilters(cacheJob.parameters[k.key], k.value), parameterMsg + k.description);
+                    parameters[k.key] = await multipleSelection(concatFilters(cacheJob.parameters[k.key] || [], k.value), parameterMsg + k.description);
                     break;
             }
         }
