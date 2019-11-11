@@ -4,8 +4,6 @@ import * as SearchCheckbox from "inquirer-search-checkbox";
 
 inquirer.registerPrompt("SearchCheckbox", SearchCheckbox);
 
-import { genLastJob } from "./"
-
 export async function multipleSelection(keys: string[],msg) {
    
     const answers = await inquirer.prompt([
@@ -23,5 +21,5 @@ export async function multipleSelection(keys: string[],msg) {
             }
         }
     ]);
-    return genLastJob(answers.key);
+    return answers.key;
 }

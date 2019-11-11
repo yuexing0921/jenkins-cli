@@ -1,6 +1,12 @@
 
 import * as fse from "fs-extra";
 import { JENKINS_DIR } from "./config";
+import { JobCliInfo} from "./jenkins-cli";
+
+export interface JobInfo extends JobCliInfo {
+	date: number
+	count: number
+}
 
 export class Cache<T> {
 	private cacheFile: string;
@@ -14,26 +20,19 @@ export class Cache<T> {
 	protected readFile = () => {
 		return fse.readFileSync(this.cacheFile, "utf8");
 	};
-
 	protected writeToFile = () => {
-		return fse.writeFile(this.cacheFile, JSON.stringify(this.cacheInfo), "utf8");
+		return fse.writeFile(this.cacheFile, JSON.stringify(this.cacheInfo, null, 2), "utf8");
 	};
 }
 
-export interface JobInfo {
-	name: string
-	parameters:{[key :string]:string}
-}
-export class LastJobCache extends Cache<JobInfo> {
+
+export class JobCache extends Cache<JobInfo[]> {
 	constructor() {
-		super("last-build-job-cache.json");
+		super("build-job-cache.json");
 		try {
 			this.cacheInfo = JSON.parse(this.readFile());
 		} catch {
-			this.cacheInfo = {
-				name:"",
-				parameters:{}
-			};
+			this.cacheInfo = [];
 		}
 	}
 
@@ -41,10 +40,20 @@ export class LastJobCache extends Cache<JobInfo> {
 		return this.cacheInfo;
 	}
 
-	refreshJob(job: JobInfo) {
-		this.cacheInfo = job;
+	refreshJob(job: JobCliInfo) {
+		const index = this.cacheInfo.findIndex(k => k.name === job.name);
+		let count = 0;
+		if(this.cacheInfo.length && index !== -1) {
+			count = this.cacheInfo[index].count
+			this.cacheInfo.splice(index,1);
+		}
+		this.cacheInfo.splice(0,0, {
+			...job,
+			date: Date.now(),
+			count: count + 1
+		});
 		this.writeToFile();
 	}
 }
 
-export const lastJobCache = new LastJobCache();
+export const jobCache = new JobCache();

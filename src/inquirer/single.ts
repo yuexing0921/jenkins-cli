@@ -5,7 +5,6 @@ import * as fuzzy from "fuzzy";
 
 inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'));
 
-import { genLastJob } from "./"
 
 export async function singleSelection(keys: string[], msg) {
 
@@ -24,5 +23,5 @@ export async function singleSelection(keys: string[], msg) {
             }
         }
     ]);
-    return genLastJob(answers.key);
+    return answers.key;
 }

@@ -1,6 +1,8 @@
 import * as Jenkins from "jenkins"
 import { JenkinsClientOptions } from "jenkins"
 
+import { jobCache,JobInfo } from "../cache";
+
 import { printError, loadXML, getBranchByRemote } from "../utils"
 import { getParametersByGit, getParametersByRadio, getParametersByCheckbox } from "./plugin";
 
@@ -23,13 +25,19 @@ interface Parameter {
     description: string;
 }
 
+export interface JobCliInfo {
+    name: string
+    parameters: { [key: string]: string }
+}
 export class JenkinsCli {
     jenkins;
+    cacheJobs: JobInfo[]; 
     constructor(options: CliOption) {
         this.jenkins = Jenkins({
             ...options.config,
             promisify: true
         })
+        this.cacheJobs = jobCache.getJob();  
     }
 
     // get the job list
@@ -88,17 +96,21 @@ export class JenkinsCli {
             printError(err)
             return [];
         }
+
     }
 
-     // todo: Unable to get the latest job queue when a single job takes a lot of time
+    // todo: Unable to get the latest job queue when a single job takes a lot of time
     async build(selectJob, parameters) {
 
         await this.jenkins.job.build({ name: selectJob, parameters })
-        
-       
-      
+
+        jobCache.refreshJob({
+            name: selectJob,
+            parameters
+        })
 
         return await this.jenkins.job.get(selectJob);
+
 
         // const log = await this.jenkins.build.logStream(selectJob, info.lastBuild.number)
 
@@ -106,12 +118,12 @@ export class JenkinsCli {
         //     log.on('data', function(text) {
         //         process.stdout.write(text)
         //     })
-    
+
         //     log.on('error', function(err) {
         //         printError(err)
         //         reject(err)
         //     })
-    
+
         //     log.on('end', function() {
         //         resolve(true)
         //     })
