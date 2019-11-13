@@ -29,7 +29,7 @@ Command line input `jk`
 $ jk
 ```
 
-
+![](./public/cli.gif)
 
 ## 
 

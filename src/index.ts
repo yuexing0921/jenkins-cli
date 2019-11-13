@@ -41,7 +41,7 @@ export const run = async (options: CliOption) => {
             return buildJob(jk, cacheJob.name, cacheJob.parameters)
         }
 
-        const cacheJob = jk.cacheJobs.find(k => k.name === selectJob) || { parameters: {} }
+        const historyJob = jk.cacheJobs.find(k => k.name === selectJob) || { parameters: {} }
 
         // get all parameters for the job
         const parametersInfo = await jk.getParameters(selectJob)
@@ -52,10 +52,10 @@ export const run = async (options: CliOption) => {
             switch (k.type) {
                 case ParameterType.git:
                 case ParameterType.radio:
-                    parameters[k.key] = await singleSelection(concatFilters([cacheJob.parameters[k.key]], k.value),  k.description || parameterMsg);
+                    parameters[k.key] = await singleSelection(concatFilters([historyJob.parameters[k.key]], k.value),  k.description || parameterMsg);
                     break;
                 case ParameterType.checkbox:
-                    parameters[k.key] = await multipleSelection(concatFilters(cacheJob.parameters[k.key] || [], k.value),  k.description || parameterMsg);
+                    parameters[k.key] = await multipleSelection(concatFilters(historyJob.parameters[k.key] || [], k.value),  k.description || parameterMsg);
                     break;
             }
         }
