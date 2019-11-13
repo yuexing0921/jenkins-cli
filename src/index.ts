@@ -52,10 +52,10 @@ export const run = async (options: CliOption) => {
             switch (k.type) {
                 case ParameterType.git:
                 case ParameterType.radio:
-                    parameters[k.key] = await singleSelection(concatFilters([cacheJob.parameters[k.key]], k.value), parameterMsg + k.description);
+                    parameters[k.key] = await singleSelection(concatFilters([cacheJob.parameters[k.key]], k.value),  k.description || parameterMsg);
                     break;
                 case ParameterType.checkbox:
-                    parameters[k.key] = await multipleSelection(concatFilters(cacheJob.parameters[k.key] || [], k.value), parameterMsg + k.description);
+                    parameters[k.key] = await multipleSelection(concatFilters(cacheJob.parameters[k.key] || [], k.value),  k.description || parameterMsg);
                     break;
             }
         }
