@@ -4,7 +4,6 @@ import chalk from 'chalk';
 
 import * as path from 'path';
 
-import { parseString } from "xml2js"
 
 import * as Git from "simple-git/promise";
 
@@ -55,7 +54,7 @@ export const printInfo = msg => {
 };
 
 export const printError = (msg: string) => {
-  console.error(msg)
+  // console.error(msg)
   console.log();
   console.log(chalk.bgRed(msg));
   console.log();
@@ -71,17 +70,7 @@ export const loadYaml = (path: string) => {
 };
 
 
-export const loadXML = (xml: string) => {
-  return new Promise((resolve, reject) => {
-    parseString(xml, (err, result) => {
-      if(err) {
-        return reject(err)
-      }
 
-      return resolve(result)
-    })
-  })
-}
 
 export const getBranchByRemote = async (url):Promise<string[]> =>{
 
