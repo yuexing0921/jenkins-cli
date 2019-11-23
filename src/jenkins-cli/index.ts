@@ -2,12 +2,13 @@ import * as Jenkins from "jenkins"
 import Axios, { AxiosInstance } from 'axios'
 import { JenkinsClientOptions } from "jenkins"
 
-import { jobCache, JobInfo } from "../cache";
+import { JobCache, JobInfo } from "../cache";
 
 import { printError } from "../utils"
 import {  getParametersByRadio, getParametersByCheckbox } from "./plugin";
 
 export interface CliOption {
+    dir: string;
     job: string;
     rebuild: boolean;
     config: JenkinsClientOptions;
@@ -39,6 +40,7 @@ export interface CrumbInfo {
 export class JenkinsCli {
     jenkins;
     cacheJobs: JobInfo[];
+    private jobCache: JobCache;
     private axios: AxiosInstance;
     private crumb: CrumbInfo;
     constructor(options: CliOption) {
@@ -46,8 +48,9 @@ export class JenkinsCli {
             ...options.config,
             promisify: true
         })
+        this.jobCache = new JobCache(options.dir);
         // this.jenkins.on('log', console.log);
-        this.cacheJobs = jobCache.getJob();
+        this.cacheJobs = this.jobCache.getJob();
         this.axios = Axios.create({
             baseURL: options.config.baseUrl,
             timeout: 5000000
@@ -150,7 +153,7 @@ export class JenkinsCli {
 
         await this.jenkins.job.build({ name: selectJob, parameters })
 
-        jobCache.refreshJob({
+        this.jobCache.refreshJob({
             name: selectJob,
             parameters
         })

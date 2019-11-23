@@ -7,13 +7,13 @@ const yargs = require("yargs").options({
 	job: {
 		alias: "j",
 		describe: "Job to be executed",
-        type: "string",
+		type: "string",
 		default: ""
 	},
 	rebuild: {
 		alias: "r",
 		describe: "Rebuild the previous job",
-        type: "boolean",
+		type: "boolean",
 		default: false
 	},
 	config: {
@@ -26,25 +26,28 @@ const yargs = require("yargs").options({
 
 const argv = yargs.argv;
 
-const projectConfig = path.resolve(argv.config) ;
-const rootConfig = path.join(os.homedir() ,argv.config) ;
+const projectConfig = path.resolve(argv.config);
+const rootConfig = path.join(os.homedir(), argv.config);
 
-let config;
-if(fs.existsSync(projectConfig)){
-    config = utils.loadYaml(projectConfig);
-} else if(fs.existsSync(rootConfig)){
-    config = utils.loadYaml(rootConfig);
-}else{
-    utils.printError(`Jenkins configuration not found.`);
-    console.log();
-    yargs.showHelp();
-    return;
+
+let config, dir;
+if (fs.existsSync(projectConfig)) {
+	config = utils.loadYaml(projectConfig);
+} else if (fs.existsSync(rootConfig)) {
+	config = utils.loadYaml(rootConfig);
+	dir = os.homedir();
+} else {
+	utils.printError(`Jenkins configuration not found.`);
+	console.log();
+	yargs.showHelp();
+	return;
 }
 
 const { run } = require("../dist");
 
 const buildOption = {
 	config,
+	dir,
 	job: argv.job,
 	rebuild: argv.rebuild
 };
