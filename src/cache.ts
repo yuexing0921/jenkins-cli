@@ -28,7 +28,7 @@ export class Cache<T> {
 
 export class JobCache extends Cache<JobInfo[]> {
 	constructor(dir: string) {
-		const fileName = (dir ?  dir + "/" : `${JENKINS_DIR}`) + "build-job-cache.json"
+		const fileName = (dir ?  dir : `${JENKINS_DIR}`) + "/build-job-cache.json"
 		super(fileName);
 		try {
 			this.cacheInfo = JSON.parse(this.readFile());
