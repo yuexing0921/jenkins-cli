@@ -46,7 +46,7 @@
     "js-yaml": "^3.13.1",
     "node-notifier": "^6.0.0",
     "opn": "^6.0.0",
-    "simple-git": "^1.126.0",
+    "simple-git": "^3.15.0",
     "yargs": "^14.2.0"
   }
 }
